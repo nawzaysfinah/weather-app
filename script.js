@@ -15,7 +15,7 @@ temperatureToggle.addEventListener("click", toggleTemperatureUnit);
 
 // Fetch weather data from OpenWeatherMap API
 function fetchWeatherData(location) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${weatherAPIKey}`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${weatherAPIKey}&units=metric`;
 
   return fetch(url)
     .then((response) => response.json())
@@ -30,23 +30,27 @@ function updateMainDisplay(weatherData) {
   // Extract required information from weatherData object
   const temperature = weatherData.main.temp;
   const humidity = weatherData.main.humidity;
-  const windSpeed = weatherData.wind.speed;
+  const windSpeed = convertWindSpeed(weatherData.wind.speed);
   const feelsLike = weatherData.main.feels_like;
   const chanceOfRain = weatherData.clouds.all;
 
   // Update the DOM elements with the obtained weather data
   mainDisplay.innerHTML = `
-    <p>Temperature: ${temperature} &#176;F</p>
+    <p>Temperature: ${temperature.toFixed(2)} &#176;C</p>
     <p>Humidity: ${humidity}%</p>
-    <p>Wind Speed: ${windSpeed} mph</p>
-    <p>Feels Like: ${feelsLike} &#176;F</p>
+    <p>Wind Speed: ${windSpeed.toFixed(2)} km/h</p>
+    <p>Feels Like: ${feelsLike.toFixed(2)} &#176;C</p>
     <p>Chance of Rain: ${chanceOfRain}%</p>
   `;
 }
 
+function convertWindSpeed(speed) {
+  return speed * 1.60934;
+}
+
 // Fetch 7-day forecast from OpenWeatherMap API
 function fetchForecast(location) {
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherAPIKey}`;
+  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherAPIKey}&units=metric`;
 
   return fetch(url)
     .then((response) => response.json())
@@ -75,7 +79,7 @@ function updateSubDisplay(forecastData) {
     dayElement.classList.add("forecast-day");
     dayElement.innerHTML = `
       <p>Date: ${date}</p>
-      <p>Temperature: ${temperature} &#176;F</p>
+      <p>Temperature: ${temperature.toFixed(2)} &#176;C</p>
       <p>Forecast: ${forecast}</p>
     `;
 
@@ -120,12 +124,15 @@ function searchWeather() {
   // Clear search input field
   searchInput.value = "";
 }
-
 // Handle temperature unit toggle click event
 function toggleTemperatureUnit() {
+  const temperatureElement = mainDisplay.querySelector("p:first-child");
+  const feelsLikeElement = mainDisplay.querySelector("p:nth-child(4)");
+  const subDisplayTemperatures = subDisplay.querySelectorAll("p:nth-child(2)");
+
   // Get the current temperature unit from the main display
   const currentTemperature = parseFloat(
-    mainDisplay.querySelector("p:first-child").innerText.split(":")[1]
+    temperatureElement.innerText.split(":")[1]
   );
 
   // Toggle between Fahrenheit and Celsius
@@ -133,15 +140,35 @@ function toggleTemperatureUnit() {
   const convertedTemperature =
     temperatureUnit === "C"
       ? ((currentTemperature - 32) * 5) / 9
-      : (currentTemperature * 9) / 5 + 32;
+      : currentTemperature;
 
   // Update temperature unit and value in the main display
   temperatureToggle.innerText = `Toggle to ${
     temperatureUnit === "C" ? "Fahrenheit" : "Celsius"
   }`;
-  mainDisplay.querySelector(
-    "p:first-child"
-  ).innerText = `Temperature: ${convertedTemperature.toFixed(
+  temperatureElement.innerHTML = `Temperature: ${convertedTemperature.toFixed(
     2
   )} &#176;${temperatureUnit}`;
+
+  // Update feels like value in the main display
+  const feelsLikeValue = parseFloat(feelsLikeElement.innerText.split(":")[1]);
+  const convertedFeelsLike =
+    temperatureUnit === "C" ? ((feelsLikeValue - 32) * 5) / 9 : feelsLikeValue;
+  feelsLikeElement.innerHTML = `Feels Like: ${convertedFeelsLike.toFixed(
+    2
+  )} &#176;${temperatureUnit}`;
+
+  // Update temperature unit and values in the sub display
+  subDisplayTemperatures.forEach((temperatureElement) => {
+    const temperatureValue = parseFloat(
+      temperatureElement.innerText.split(":")[1]
+    );
+    const convertedSubTemperature =
+      temperatureUnit === "C"
+        ? ((temperatureValue - 32) * 5) / 9
+        : temperatureValue;
+    temperatureElement.innerHTML = `Temperature: ${convertedSubTemperature.toFixed(
+      2
+    )} &#176;${temperatureUnit}`;
+  });
 }
