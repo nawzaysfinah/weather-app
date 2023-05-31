@@ -13,9 +13,13 @@ const weatherIcons = {
   "clear sky": "wi wi-day-sunny",
   "few clouds": "wi wi-day-cloudy",
   "scattered clouds": "wi wi-cloud",
+  "overcast clouds": "wi wi-cloud",
   "broken clouds": "wi wi-cloudy",
   "shower rain": "wi wi-showers",
   "light rain": "wi wi-rain",
+  "light snow": "wi wi-snow",
+  "heavy snow": "wi wi-snow",
+  "rain and snow": "wi wi-snow",
   // thunderstorm: "wi wi-thunderstorm",
   // snow: "wi wi-snow",
   // mist: "wi wi-fog",
@@ -101,7 +105,7 @@ function updateSubDisplay(forecastData) {
     const forecastElement = document.createElement("div");
     forecastElement.innerHTML = `
       <div class="forecast-item">
-        <p><i class="${iconClassName}"></i></p>
+        <p>${weatherDescription} <i class="${iconClassName}"></i></p>
         <p>${date.toLocaleDateString()}</p>
         <p class="temperature">${temperature.toFixed(2)} &#176;C</p>
       </div>
@@ -110,64 +114,6 @@ function updateSubDisplay(forecastData) {
     subDisplay.appendChild(forecastElement);
   });
 }
-
-// // Update sub display with forecast data
-// function updateSubDisplay(forecastData) {
-//   const forecasts = forecastData.list.slice(0, 7);
-
-//   subDisplay.innerHTML = "";
-
-//   forecasts.forEach((forecast) => {
-//     const date = new Date(forecast.dt_txt);
-//     const temperature = forecast.main.temp;
-//     const weatherDescription = forecast.weather[0].description;
-
-//     // Get the corresponding Weather Icons class name for the weather description
-//     const iconClassName = weatherIcons[weatherDescription];
-
-//     const forecastElement = document.createElement("div");
-//     forecastElement.innerHTML = `
-//       <p>Date: ${date.toLocaleDateString()}</p>
-//       <p><i class="wi wi-thermometer"></i> Temperature: ${temperature.toFixed(
-//         2
-//       )} &#176;C</p>
-//       <p>Forecast: <i class="${iconClassName}"></i> ${weatherDescription}</p>
-//       <hr>
-//     `;
-
-//     subDisplay.appendChild(forecastElement);
-//   });
-// }
-
-// // Update sub display with 7-day forecast
-// function updateSubDisplay(forecastData) {
-//   // Extract required information from forecastData object
-//   const forecastList = forecastData.list.slice(0, 7); // Get only the first 7 days
-
-//   // Clear existing content in sub display
-//   subDisplay.innerHTML = "";
-
-//   // Loop through forecast data and update the DOM elements
-//   forecastList.forEach((dayData) => {
-//     const date = dayData.dt_txt.split(" ")[0];
-//     const temperature = dayData.main.temp;
-//     const forecast = dayData.weather[0].description;
-
-//     // Create a new element for each day's forecast
-//     const dayElement = document.createElement("div");
-//     dayElement.classList.add("forecast-day");
-//     dayElement.innerHTML = `
-//       <p><i class="fas fa-calendar-alt"></i> Date: ${date}</p>
-
-//       <p><i class="fas fa-thermometer-half"></i> Temperature: ${temperature.toFixed(
-//         2
-//       )} &#176;C</p>
-//       <p>Forecast: ${forecast}</p>
-//     `;
-
-//     subDisplay.appendChild(dayElement);
-//   });
-// }
 
 // Search for a relevant GIF on GIPHY
 function searchGIF(location) {
