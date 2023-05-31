@@ -89,8 +89,9 @@ function updateSubDisplay(forecastData) {
 
   subDisplay.innerHTML = "";
 
-  forecasts.forEach((forecast) => {
-    const date = new Date(forecast.dt_txt);
+  forecasts.forEach((forecast, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() + index + 1); // Add index + 1 to increment the date for each forecast
     const temperature = forecast.main.temp;
     const weatherDescription = forecast.weather[0].description;
 
@@ -99,17 +100,44 @@ function updateSubDisplay(forecastData) {
 
     const forecastElement = document.createElement("div");
     forecastElement.innerHTML = `
-      <p>Date: ${date.toLocaleDateString()}</p>
-      <p><i class="wi wi-thermometer"></i> Temperature: ${temperature.toFixed(
-        2
-      )} &#176;C</p>
-      <p>Forecast: <i class="${iconClassName}"></i> ${weatherDescription}</p>
-      <hr>
+      <div class="forecast-item">
+        <p><i class="${iconClassName}"></i></p>
+        <p>${date.toLocaleDateString()}</p>
+        <p class="temperature">${temperature.toFixed(2)} &#176;C</p>
+      </div>
     `;
 
     subDisplay.appendChild(forecastElement);
   });
 }
+
+// // Update sub display with forecast data
+// function updateSubDisplay(forecastData) {
+//   const forecasts = forecastData.list.slice(0, 7);
+
+//   subDisplay.innerHTML = "";
+
+//   forecasts.forEach((forecast) => {
+//     const date = new Date(forecast.dt_txt);
+//     const temperature = forecast.main.temp;
+//     const weatherDescription = forecast.weather[0].description;
+
+//     // Get the corresponding Weather Icons class name for the weather description
+//     const iconClassName = weatherIcons[weatherDescription];
+
+//     const forecastElement = document.createElement("div");
+//     forecastElement.innerHTML = `
+//       <p>Date: ${date.toLocaleDateString()}</p>
+//       <p><i class="wi wi-thermometer"></i> Temperature: ${temperature.toFixed(
+//         2
+//       )} &#176;C</p>
+//       <p>Forecast: <i class="${iconClassName}"></i> ${weatherDescription}</p>
+//       <hr>
+//     `;
+
+//     subDisplay.appendChild(forecastElement);
+//   });
+// }
 
 // // Update sub display with 7-day forecast
 // function updateSubDisplay(forecastData) {
@@ -160,6 +188,10 @@ function updateBackgroundGIF(url) {
 
 // Handle search button click event
 function searchWeather() {
+  // Display the main display and sub display
+  mainDisplay.style.display = "block";
+  subDisplay.style.display = "block";
+
   const location = searchInput.value;
 
   fetchWeatherData(location)

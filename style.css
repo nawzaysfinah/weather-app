@@ -10,20 +10,70 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  background: linear-gradient(to bottom, #16222a, #3a6073);
+  background: white;
 }
 
 #app-container {
   max-width: 100%;
   margin: 50px auto;
-  background-color: transparent;
+  background: linear-gradient(to bottom, #16222a, #3a6073);
+  opacity: 0.95;
   padding: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
 h1 {
   text-align: center;
-  color: red;
+  color: white;
+}
+
+/* Main display */
+#main-display {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: none; /* Hide the main display initially */
+
+}
+
+/* Sub display */
+#sub-display {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 20px;
+  display: none; /* Hide the sub display initially */
+
+}
+
+/* 7-day forecast title */
+#sub-display h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* Display forecast items in a row */
+.forecast-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Adjust forecast item layout */
+.forecast-item p {
+  margin: 0;
+}
+
+.forecast-item .wi {
+  font-size: 24px;
+}
+
+.forecast-item .temperature {
+  font-weight: bold;
+  margin-left: 10px;
 }
 
 #search-container {
@@ -50,7 +100,7 @@ h1 {
   cursor: pointer;
 }
 
-#main-display,
+/* #main-display,
 #sub-display {
   background-color: rbga(255, 255, 255, 0.8);
   padding: 10px;
@@ -69,13 +119,3 @@ h1 {
   margin: 5px;
 }
 
-#temperature-toggle {
-  display: block;
-  margin: 0 auto;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
