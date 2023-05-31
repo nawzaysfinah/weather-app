@@ -9,9 +9,28 @@ const temperatureToggle = document.getElementById("temperature-toggle");
 const mainDisplay = document.getElementById("main-display");
 const subDisplay = document.getElementById("sub-display");
 
+const weatherIcons = {
+  "clear sky": "wi wi-day-sunny",
+  "few clouds": "wi wi-day-cloudy",
+  "scattered clouds": "wi wi-cloud",
+  "broken clouds": "wi wi-cloudy",
+  "shower rain": "wi wi-showers",
+  "light rain": "wi wi-rain",
+  // thunderstorm: "wi wi-thunderstorm",
+  // snow: "wi wi-snow",
+  // mist: "wi wi-fog",
+};
+
 // Event listeners
 searchButton.addEventListener("click", searchWeather);
 temperatureToggle.addEventListener("click", toggleTemperatureUnit);
+
+// Attach event listener to search input field for handling Enter key press
+searchInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+    searchWeather();
+  }
+});
 
 // Fetch weather data from OpenWeatherMap API
 function fetchWeatherData(location) {
@@ -36,12 +55,16 @@ function updateMainDisplay(weatherData) {
 
   // Update the DOM elements with the obtained weather data
   mainDisplay.innerHTML = `
-    <p>Temperature: ${temperature.toFixed(2)} &#176;C</p>
-    <p>Humidity: ${humidity}%</p>
-    <p>Wind Speed: ${windSpeed.toFixed(2)} km/h</p>
-    <p>Feels Like: ${feelsLike.toFixed(2)} &#176;C</p>
-    <p>Chance of Rain: ${chanceOfRain}%</p>
-  `;
+  <p><i class="fas fa-thermometer-half"></i> Temperature: ${temperature.toFixed(
+    2
+  )} &#176;C</p>
+  <p><i class="fas fa-tint"></i> Humidity: ${humidity}%</p>
+  <p><i class="fas fa-wind"></i> Wind Speed: ${windSpeed.toFixed(2)} km/h</p>
+  <p><i class="fas fa-temperature-low"></i> Feels Like: ${feelsLike.toFixed(
+    2
+  )} &#176;C</p>
+  <p><i class="fas fa-cloud-showers-heavy"></i> Chance of Rain: ${chanceOfRain}%</p>
+`;
 }
 
 function convertWindSpeed(speed) {
@@ -60,32 +83,63 @@ function fetchForecast(location) {
     });
 }
 
-// Update sub display with 7-day forecast
+// Update sub display with forecast data
 function updateSubDisplay(forecastData) {
-  // Extract required information from forecastData object
-  const forecastList = forecastData.list.slice(0, 7); // Get only the first 7 days
+  const forecasts = forecastData.list.slice(0, 7);
 
-  // Clear existing content in sub display
   subDisplay.innerHTML = "";
 
-  // Loop through forecast data and update the DOM elements
-  forecastList.forEach((dayData) => {
-    const date = dayData.dt_txt.split(" ")[0];
-    const temperature = dayData.main.temp;
-    const forecast = dayData.weather[0].description;
+  forecasts.forEach((forecast) => {
+    const date = new Date(forecast.dt_txt);
+    const temperature = forecast.main.temp;
+    const weatherDescription = forecast.weather[0].description;
 
-    // Create a new element for each day's forecast
-    const dayElement = document.createElement("div");
-    dayElement.classList.add("forecast-day");
-    dayElement.innerHTML = `
-      <p>Date: ${date}</p>
-      <p>Temperature: ${temperature.toFixed(2)} &#176;C</p>
-      <p>Forecast: ${forecast}</p>
+    // Get the corresponding Weather Icons class name for the weather description
+    const iconClassName = weatherIcons[weatherDescription];
+
+    const forecastElement = document.createElement("div");
+    forecastElement.innerHTML = `
+      <p>Date: ${date.toLocaleDateString()}</p>
+      <p><i class="wi wi-thermometer"></i> Temperature: ${temperature.toFixed(
+        2
+      )} &#176;C</p>
+      <p>Forecast: <i class="${iconClassName}"></i> ${weatherDescription}</p>
+      <hr>
     `;
 
-    subDisplay.appendChild(dayElement);
+    subDisplay.appendChild(forecastElement);
   });
 }
+
+// // Update sub display with 7-day forecast
+// function updateSubDisplay(forecastData) {
+//   // Extract required information from forecastData object
+//   const forecastList = forecastData.list.slice(0, 7); // Get only the first 7 days
+
+//   // Clear existing content in sub display
+//   subDisplay.innerHTML = "";
+
+//   // Loop through forecast data and update the DOM elements
+//   forecastList.forEach((dayData) => {
+//     const date = dayData.dt_txt.split(" ")[0];
+//     const temperature = dayData.main.temp;
+//     const forecast = dayData.weather[0].description;
+
+//     // Create a new element for each day's forecast
+//     const dayElement = document.createElement("div");
+//     dayElement.classList.add("forecast-day");
+//     dayElement.innerHTML = `
+//       <p><i class="fas fa-calendar-alt"></i> Date: ${date}</p>
+
+//       <p><i class="fas fa-thermometer-half"></i> Temperature: ${temperature.toFixed(
+//         2
+//       )} &#176;C</p>
+//       <p>Forecast: ${forecast}</p>
+//     `;
+
+//     subDisplay.appendChild(dayElement);
+//   });
+// }
 
 // Search for a relevant GIF on GIPHY
 function searchGIF(location) {
